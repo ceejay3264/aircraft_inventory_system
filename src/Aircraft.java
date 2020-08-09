@@ -9,7 +9,7 @@ public class Aircraft {
     long serialNumber;
     String modelType;
     Vector<Pilot> pilotHistory;
-    Vector<String> locHistory;
+    Vector<Flight> flightHistory;
     Map<String, Integer> weaponsMap;
 
 
@@ -22,7 +22,7 @@ public class Aircraft {
         this.currentLocation = loc;
         this.modelType = model;
         this.pilotHistory = new Vector<Pilot>();
-        this.locHistory = new Vector<String>();
+        this.flightHistory = new Vector<Flight>();
         this.weaponsMap = new HashMap<String, Integer>();
     }
 
