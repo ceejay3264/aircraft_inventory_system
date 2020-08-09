@@ -10,7 +10,7 @@ public class Session {
     Map<Pilot, Set<Aircraft>> pilotMap = new HashMap<Pilot, Set<Aircraft>>();
     Map<String, Set<Aircraft>> weaponsMap = new HashMap<String, Set<Aircraft>>();
     Vector<Flight> allFlights = new Vector<Flight>();
-    boolean weapons = false;
+
     boolean pilot = false;
 
     void addAircraft() {
@@ -18,6 +18,7 @@ public class Session {
             System.out.println("Enter Aircraft model:");
             String tempModel = sc.nextLine();
             long tempSerial;
+            boolean weapons = false;
             while (true) {
                 System.out.println("Enter Aircraft serial number:");
                 tempSerial = sc.nextLong();
@@ -136,6 +137,7 @@ public class Session {
                         break;
                     }
                 }
+                else break;
             }
 
             Flight newFlight = new Flight(currentAcLoc, tempTakeoff, acInFlight, pilotInFlight);
@@ -153,14 +155,82 @@ public class Session {
         String fName = sc.nextLine();
         System.out.println("Last name of Pilot:");
         String lName = sc.nextLine();
-        System.out.println("Enter Pilot ID:");
-        long pID = sc.nextLong();
-        sc.nextLine();//swallowing EOL token
+        long pID;
+        while(true) {
+            System.out.println("Enter Pilot ID:");
+            pID = sc.nextLong();
+            sc.nextLine();//swallowing EOL token
+            Pilot tempPilot = serialPilotMap.get(pID);
+            if(tempPilot != null){
+                System.out.println("ERROR: Please enter a unique Pilot ID");
+            }
+            else break;
+        }
+
         Pilot newPilot = new Pilot(fName, lName, pID);
         serialPilotMap.put(pID, newPilot);
         return newPilot;
     }
 
+    void display(){
+        System.out.println("Enter corresponding number to display:");
+        System.out.println("Aircrafts (1)");
+        System.out.println("Flights   (2)");
+        System.out.println("Pilots    (3)");
+        int answer = sc.nextInt();
+        sc.nextLine();//swallowing EOL token
+        if(answer == 1) displayAircrafts();
+        else if(answer == 2) displayFlights();
+        else if(answer == 3) displayPilots();
+    }
 
+    void displayAircrafts(){
+        Iterator<Map.Entry<Long, Aircraft>> it = serialMap.entrySet().iterator();
+
+        while(it.hasNext())
+        {
+            Map.Entry<Long, Aircraft> entry = it.next();
+            Aircraft currAC = entry.getValue();
+            System.out.println("__________________________________________________________________");
+            System.out.println("Serial Number: " + entry.getKey());
+            System.out.println("Model: " + currAC.modelType);
+            System.out.println("Current Location: " + currAC.currentLocation);
+            System.out.println("__________________________________________________________________");
+            System.out.println();
+        }
+    }
+
+    void displayPilots(){
+        Iterator<Map.Entry<Long, Pilot>> it = serialPilotMap.entrySet().iterator();
+
+        while(it.hasNext())
+        {
+            Map.Entry<Long, Pilot> entry = it.next();
+            Pilot currPilot = entry.getValue();
+            System.out.println("__________________________________________________________________");
+            System.out.println("Pilot ID: " + entry.getKey());
+            System.out.println("Name: " + currPilot.firstName + " " + currPilot.lastName);
+            System.out.println("__________________________________________________________________");
+            System.out.println();
+
+        }
+    }
+
+    void displayFlights(){
+        for(int i=0; i<allFlights.size(); i++){
+            Flight curr = allFlights.get(i);
+            System.out.println("__________________________________________________________________");
+            System.out.println("From: " + curr.startLoc + " To: " + curr.finalLoc + " Date: " + curr.timeLeft);
+            System.out.println("Final Location: " + curr.finalLoc);
+            System.out.println();
+            System.out.println("Aircraft: ");
+            System.out.println("Serial Number: " + curr.vehicle.serialNumber + " Model: " + curr.vehicle.modelType);
+            System.out.println("Pilot: " + curr.pilot);
+            System.out.println("__________________________________________________________________");
+            System.out.println();
+
+
+        }
+    }
 
 }

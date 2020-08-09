@@ -1,8 +1,8 @@
 public class Flight {
     String startLoc;
-    String finalLoc;
+    String finalLoc = "N/A";
     String timeLeft;
-    String arrivalTime;
+    String arrivalTime = "N/A";
     Aircraft vehicle;
     Pilot pilot;
 
