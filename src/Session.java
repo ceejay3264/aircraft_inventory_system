@@ -224,13 +224,100 @@ public class Session {
             System.out.println("Final Location: " + curr.finalLoc);
             System.out.println();
             System.out.println("Aircraft: ");
-            System.out.println("Serial Number: " + curr.vehicle.serialNumber + " Model: " + curr.vehicle.modelType);
-            System.out.println("Pilot: " + curr.pilot);
-            System.out.println("__________________________________________________________________");
+            System.out.println("   Serial Number: " + curr.vehicle.serialNumber + " Model: " + curr.vehicle.modelType);
             System.out.println();
+        System.out.println("Pilot: " + curr.pilot.firstName + " " + curr.pilot.lastName);
+        System.out.println("__________________________________________________________________");
+        System.out.println();
 
 
+    }
+}
+
+    void search(){
+        System.out.println("Enter corresponding number to search:");
+        System.out.println("   By Aircraft Serial Number (1)");
+        System.out.println("   By Aircraft Model Type    (2)");
+        System.out.println("   By Location History       (3)");
+        System.out.println("   By Pilot History          (4)");
+        System.out.println("   By Weapons On-board       (5)");
+        System.out.println("   Back to main menu         (6)");
+
+
+        int answer = sc.nextInt();
+        sc.nextLine();//swallowing EOL token
+        if(answer == 1){
+            while(true) {
+                System.out.println("Enter Aircraft Serial Number:");
+                Long serialanswer = sc.nextLong();
+                sc.nextLine();//swallowing EOL token
+                Aircraft tempSerialAC = serialMap.get(serialanswer);
+                if (tempSerialAC == null) System.out.println("ERROR: Serial number does not exist in system");
+                else {
+                    System.out.println("__________________________________________________________________");
+                    System.out.println("Serial Number: " + serialanswer);
+                    System.out.println("Model: " + tempSerialAC.modelType);
+                    System.out.println("Current Location: " + tempSerialAC.currentLocation);
+                    System.out.println("__________________________________________________________________");
+                    System.out.println();
+                    System.out.println("Edit this Aircraft? (Y or N)");
+                    String editAnswer = sc.nextLine();
+                    if(editAnswer.equals("Y")){
+                        System.out.println("Enter corresponding number:");
+                        System.out.println("   Update Current Location (1)");
+                        System.out.println("   Add On-board Weapons    (2)");
+                        System.out.println("   Back to main menu       (3)");
+
+                        int editAnswer2 = sc.nextInt();
+                        sc.nextLine();//swallowing EOL token
+                        if(editAnswer2 == 1){
+                            System.out.println("What is the new current location?");
+                            String newLoc = sc.nextLine();
+                            tempSerialAC.currentLocation = newLoc;
+                        }
+                        else if(editAnswer2 == 2){
+                            while (true) {
+                                System.out.println("Enter the weapon model type:");
+                                String weaponsModel = sc.nextLine();
+                                System.out.println("Enter " + weaponsModel + " count on Aircraft:");
+                                int weaponCount = sc.nextInt();
+                                sc.nextLine();//swallowing EOL token
+                                tempSerialAC.weaponsMap.put(weaponsModel, weaponCount);
+                                System.out.println("Would you like to add more weapons to this Aircraft? (Y or N)");
+                                String moreAnswer = sc.nextLine();
+                                if (moreAnswer.equals("N")) break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
         }
+        else if(answer == 2){
+            while(true) {
+                System.out.println("Enter Aircraft Model Type:");
+                String modelAnswer = sc.nextLine();
+                Set<Aircraft> modelAC = modelMap.get(modelAnswer);
+                if (modelAC == null) System.out.println("ERROR: Model type does not exist in system or was entered incorrectly");
+                else {
+                    int i = 1;
+                    for (Aircraft ac: modelAC) {
+                        System.out.println("__________________________________________________________________");
+                        System.out.println("Serial Number: " + ac.serialNumber);
+                        System.out.println("Model: " + ac.modelType);
+                        System.out.println("Current Location: " + ac.currentLocation);
+                        System.out.println("__________________________________________________________________");
+                        System.out.println();
+                        i++;
+                    }
+                    break;
+                }
+            }
+        }
+        else if(answer == 3){} //displayPilots();
+        else if(answer == 4){} //displayPilots();
+        else if(answer == 5){} //displayPilots();
+        else return;
     }
 
 }
