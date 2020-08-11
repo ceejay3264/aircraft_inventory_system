@@ -74,7 +74,7 @@ public class Session {
 
             if (weapons) {
                 for (String current : AC.weaponsMap.keySet()) {//iterate through each weapon in the recently added aircraft
-                    Set<Aircraft> tempWeaponsSet = locationMap.get(current); //attempt to fins current weapon in weapons map
+                    Set<Aircraft> tempWeaponsSet = weaponsMap.get(current); //attempt to find current weapon in weapons map
 
                     //update weapons map
                     if (tempWeaponsSet == null) {//creat new aircraft set and add to map
@@ -343,7 +343,17 @@ public class Session {
                                 System.out.println("Enter " + weaponsModel + " count on Aircraft:");
                                 int weaponCount = sc.nextInt();
                                 sc.nextLine();//swallowing EOL token
-                                tempSerialAC.weaponsMap.put(weaponsModel, weaponCount);
+                                Set<Aircraft> tempWeaponsSet = weaponsMap.get(weaponsModel); //attempt to find current weapon in weapons map
+
+                                //update weapons map
+                                if (tempWeaponsSet == null) {//creat new aircraft set and add to map
+                                    Set<Aircraft> acSet = new HashSet<>();
+                                    acSet.add(tempSerialAC);
+                                    weaponsMap.put(weaponsModel, acSet);
+                                } else {//add aircraft to existing set
+                                    tempWeaponsSet.add(tempSerialAC);
+                                }
+
                                 System.out.println("Would you like to add more weapons to this Aircraft? (Y or N)");
                                 String moreAnswer = sc.nextLine();
                                 if (moreAnswer.equals("N")) break;
