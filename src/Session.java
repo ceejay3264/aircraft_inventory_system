@@ -118,7 +118,7 @@ public class Session {
 
             String currentAcLoc = acInFlight.currentLocation;
 
-            System.out.println("Time of takeoff:");
+            System.out.println("Date of takeoff:");
             System.out.println("Enter as mm/dd/yyyy");
             String tempTakeoff = sc.nextLine();
 
@@ -139,10 +139,39 @@ public class Session {
                 }
                 else break;
             }
-
             Flight newFlight = new Flight(currentAcLoc, tempTakeoff, acInFlight, pilotInFlight);
+
+            System.out.println("Do you know the date of arrival?(Y or N)");
+            String answer = sc.nextLine();
+            if(answer.equals("Y")){
+                System.out.println("Enter date of arrival:");
+                System.out.println("Enter as mm/dd/yyyy");
+                String arrivalTime = sc.nextLine();
+                newFlight.arrivalTime = arrivalTime;
+            }
+
+            System.out.println("Do you know the landing location?(Y or N)");
+            String landingAnswer = sc.nextLine();
+            if(landingAnswer.equals("Y")){
+                System.out.println("Enter landing location:");
+                String landingLoc = sc.nextLine();
+                newFlight.finalLoc = landingLoc;
+            }
+
             allFlights.add(newFlight);
             acInFlight.flightHistory.add(newFlight);
+            acInFlight.pilotHistory.add(pilotInFlight);
+
+            Set<Aircraft> tempSet = pilotMap.get(pilotInFlight);
+
+            //update locations map
+            if (tempSet == null) {//add aircraft to existing location set
+                Set<Aircraft> acSet = new HashSet<Aircraft>();
+                acSet.add(acInFlight);
+                pilotMap.put(pilotInFlight, acSet);
+            } else {
+                tempSet.add(acInFlight);
+            }
 
             System.out.println("Would you like to log another flight? (Y or N)");
             String newACAnswer = sc.nextLine();
@@ -196,7 +225,6 @@ public class Session {
             System.out.println("Model: " + currAC.modelType);
             System.out.println("Current Location: " + currAC.currentLocation);
             System.out.println("__________________________________________________________________");
-            System.out.println();
         }
     }
 
@@ -211,7 +239,6 @@ public class Session {
             System.out.println("Pilot ID: " + entry.getKey());
             System.out.println("Name: " + currPilot.firstName + " " + currPilot.lastName);
             System.out.println("__________________________________________________________________");
-            System.out.println();
 
         }
     }
@@ -228,7 +255,6 @@ public class Session {
             System.out.println();
         System.out.println("Pilot: " + curr.pilot.firstName + " " + curr.pilot.lastName);
         System.out.println("__________________________________________________________________");
-        System.out.println();
 
 
     }
@@ -238,9 +264,9 @@ public class Session {
         System.out.println("Enter corresponding number to search:");
         System.out.println("   By Aircraft Serial Number (1)");
         System.out.println("   By Aircraft Model Type    (2)");
-        System.out.println("   By Location History       (3)");
-        System.out.println("   By Pilot History          (4)");
-        System.out.println("   By Weapons On-board       (5)");
+        System.out.println("   By Location               (3)");
+        System.out.println("   By Pilot                  (4)");
+        System.out.println("   By Weapon Model Type      (5)");
         System.out.println("   Back to main menu         (6)");
 
 
@@ -258,6 +284,40 @@ public class Session {
                     System.out.println("Serial Number: " + serialanswer);
                     System.out.println("Model: " + tempSerialAC.modelType);
                     System.out.println("Current Location: " + tempSerialAC.currentLocation);
+                    System.out.println("Pilot History: ");
+                    for(Pilot  i : tempSerialAC.pilotHistory){
+                        System.out.println("   _____________________________________________________________");
+                        System.out.println("   Name: " + i.firstName + " " + i.lastName);
+                        System.out.println("   Pilot ID: " + i.pilotID);
+                        System.out.println("   _____________________________________________________________");
+
+                    }
+                    System.out.println();
+                    System.out.println("Flight History: ");
+                    for(Flight  i : tempSerialAC.flightHistory){
+                        System.out.println("   _____________________________________________________________");
+                        System.out.println("   From: " + i.startLoc + " To: " + i.finalLoc + " Date: " + i.timeLeft);
+                        System.out.println("   Final Location: " + i.finalLoc);
+                        System.out.println();
+                        System.out.println("   Aircraft: ");
+                        System.out.println("      Serial Number: " + i.vehicle.serialNumber + " Model: " + i.vehicle.modelType);
+                        System.out.println();
+                        System.out.println("   Pilot: " + i.pilot.firstName + " " + i.pilot.lastName);
+                        System.out.println("   _____________________________________________________________");
+                    }
+                    System.out.println();
+                    System.out.println("On-board Weapons: ");
+                    Iterator<Map.Entry<String, Integer>> it = tempSerialAC.weaponsMap.entrySet().iterator();
+                    while(it.hasNext())
+                    {
+                        Map.Entry<String, Integer> entry = it.next();
+                        Integer ammo = entry.getValue();
+                        System.out.println("   _____________________________________________________________");
+                        System.out.println("   Weapon Model: " + entry.getKey());
+                        System.out.println("   Count: " + ammo);
+                        System.out.println("   _____________________________________________________________");
+                    }
+
                     System.out.println("__________________________________________________________________");
                     System.out.println();
                     System.out.println("Edit this Aircraft? (Y or N)");
@@ -300,23 +360,85 @@ public class Session {
                 Set<Aircraft> modelAC = modelMap.get(modelAnswer);
                 if (modelAC == null) System.out.println("ERROR: Model type does not exist in system or was entered incorrectly");
                 else {
-                    int i = 1;
                     for (Aircraft ac: modelAC) {
                         System.out.println("__________________________________________________________________");
                         System.out.println("Serial Number: " + ac.serialNumber);
                         System.out.println("Model: " + ac.modelType);
                         System.out.println("Current Location: " + ac.currentLocation);
                         System.out.println("__________________________________________________________________");
-                        System.out.println();
-                        i++;
                     }
                     break;
                 }
             }
         }
-        else if(answer == 3){} //displayPilots();
-        else if(answer == 4){} //displayPilots();
-        else if(answer == 5){} //displayPilots();
+        else if(answer == 3){
+            while(true) {
+                System.out.println("Enter Location:");
+                String locAnswer = sc.nextLine();
+                Set<Aircraft> locAC = locationMap.get(locAnswer);
+                if (locAC == null) System.out.println("ERROR: Location does not exist in system or was entered incorrectly");
+                else {
+                    for (Aircraft ac: locAC) {
+                        System.out.println("__________________________________________________________________");
+                        System.out.println("Serial Number: " + ac.serialNumber);
+                        System.out.println("Model: " + ac.modelType);
+                        System.out.println("Current Location: " + ac.currentLocation);
+                        System.out.println("__________________________________________________________________");
+                    }
+                    break;
+                }
+            }
+        }
+        else if(answer == 4){
+            while(true) {
+                System.out.println("Enter Pilot ID:");
+                Long serialAnswer = sc.nextLong();
+                sc.nextLine();//swallowing EOL token
+                Pilot tempPilot = serialPilotMap.get(serialAnswer);
+                if(tempPilot == null) System.out.println("ERROR: Pilot does not exist in system or ID was entered incorrectly");
+                else {
+                    Set<Aircraft> tempSet = pilotMap.get(tempPilot);
+                    for (Aircraft ac: tempSet) {
+                        System.out.println("__________________________________________________________________");
+                        System.out.println("Serial Number: " + ac.serialNumber);
+                        System.out.println("Model: " + ac.modelType);
+                        System.out.println("Current Location: " + ac.currentLocation);
+                        System.out.println("__________________________________________________________________");
+                    }
+                    break;
+                }
+            }
+        }
+        else if(answer == 5){
+            while(true) {
+                System.out.println("Enter weapon model name:");
+                String wAnswer = sc.nextLine();
+                Set<Aircraft> wAC = weaponsMap.get(wAnswer);
+                if (wAC == null) System.out.println("ERROR: Weapon does not exist in system or was entered incorrectly");
+                else {
+                    for (Aircraft ac: wAC) {
+                        System.out.println("__________________________________________________________________");
+                        System.out.println("Serial Number: " + ac.serialNumber);
+                        System.out.println("Model: " + ac.modelType);
+                        System.out.println("Current Location: " + ac.currentLocation);
+                        System.out.println("On-board Weapons: ");
+                        Iterator<Map.Entry<String, Integer>> it = ac.weaponsMap.entrySet().iterator();
+
+                        while(it.hasNext())
+                        {
+                            Map.Entry<String, Integer> entry = it.next();
+                            Integer ammo = entry.getValue();
+                            System.out.println("   _____________________________________________________________");
+                            System.out.println("   Weapon Model: " + entry.getKey());
+                            System.out.println("   Count: " + ammo);
+                            System.out.println("   _____________________________________________________________");
+                        }
+                        System.out.println("__________________________________________________________________");
+                    }
+                    break;
+                }
+            }
+        }
         else return;
     }
 
