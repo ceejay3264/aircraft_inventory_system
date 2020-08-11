@@ -3,10 +3,9 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        Vector<Flight> flightLog;
+        int inputNum = 1;
         Vector<String> menu = new Vector<>();
         Scanner sc= new Scanner(System.in);
-        int inputNum;
         Session sesh = new Session();
 
         menu.add("   Add an Aircraft  (1)");
@@ -21,14 +20,17 @@ public class Main {
             for (String s : menu) {
                 System.out.println(s);
             }
-            inputNum = sc.nextInt();
-            if(inputNum == 1) sesh.addAircraft();
-            else if(inputNum == 2) sesh.logFlight();
-            else if(inputNum == 3) sesh.registerPilot();
-            else if(inputNum == 4) sesh.display();
-            else if(inputNum == 5) sesh.search();
-            else break;
-
+            if(sc.hasNextInt()) {//checks if int is entered
+                inputNum = sc.nextInt();
+                if (inputNum == 1) sesh.addAircraft();
+                else if (inputNum == 2) sesh.logFlight();
+                else if (inputNum == 3) sesh.registerPilot();
+                else if (inputNum == 4) sesh.display();
+                else if (inputNum == 5) sesh.search();
+                else break;
+            }
+            else System.out.println("ERROR:Please enter a number corresponding with a menu item.");
+            sc.nextLine();
         }
 
     }

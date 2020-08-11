@@ -11,8 +11,4 @@ public class Pilot {
         this.lastName = lName;
         this.pilotID = ID;
     }
-
-
-
-
 }
